@@ -4,7 +4,9 @@
 #include <time.h>
 #include <stdio.h>
 
+#include "globalvars.h"
 #include "notes.h"
+#include "chordinfo.h"
 
 
 // bass range: E2 (24+4=28) to C4 (48)
@@ -13,26 +15,33 @@
 // Soprano: D4 (48+2=50) to G5 (60+7=67)
 
 
-int sdivision = 8;
-int sdivPerDiv = 2;
-int nparts = 4;
-int nmeasures = 8;
-int* rangemin;
-int* rangemax;
 
 void outputMD();
 
+void putIntervalArray(Note* part, int* intervals) {
+    // intervals has to be size of part-1
+    int intervalLen = mdivision * sdivPerDiv * nmeasures - 1;
+    for(int i = 0; i < intervalLen; ++i) {
+        intervals[i] = part[i+1].pitch - part[i].pitch;
+    }
+}
+
 int main() {
+    initGlobals();
     srand(time(NULL));
 
     Note** parts;
+    int** partsIntervals;
 
-    // Initialize parts array
+    // Initialize parts array and intervals array
     parts = malloc(sizeof(Note*) * (nparts + 1));
+    partsIntervals = malloc(sizeof(int*) * (nparts+1));
     for (int i = 0; i < nparts; ++i) {
-        parts[i] = malloc(sizeof(Note) * sdivision * nmeasures);
+        parts[i] = malloc(sizeof(Note) * totalSubdivisions);
+        parts[i] = malloc(sizeof(int)  * totalSubdivisions);
     }
     parts[nparts] = 0;
+    partsIntervals[nparts] = 0;
 
     rangemin = malloc(sizeof(int) * nparts);
     rangemax = malloc(sizeof(int) * nparts);
@@ -40,8 +49,6 @@ int main() {
 // tenor range: D3 (36+2=38) to G4 (48+7=55)
 // alto: G3 (36+7=43) to D5 (60+2=62)
 // Soprano: D4 (48+2=50) to G5 (60+7=67)
-
-
     rangemin[0] = 28;
     rangemin[1] = 38;
     rangemin[2] = 43;
@@ -54,13 +61,20 @@ int main() {
 
     // Generate random notes
     for (int i = 0; i < nparts; ++i) {
-        for (int j = 0; j < nmeasures * sdivision; ++j) {
+        for (int j = 0; j < nmeasures * mdivision * sdivPerDiv; ++j) {
             int rangediff = rangemax[i] - rangemin[i];
             int p = (rand() % rangediff) + rangemin[i];
             parts[i][j].pitch = p;
             parts[i][j].flags = 0;
         }
     }
+
+
+
+
+
+
+
 
     outputMD(parts);
 }
@@ -92,8 +106,8 @@ void outputMD(Note** parts) {
             if (part != 0) {
                 printf("back 8\n");
             }
-            for (int sd = 0; sd < sdivision; ++sd) {
-                Note n = parts[part][m*sdivision+sd];
+            for (int sd = 0; sd < mdivision*sdivPerDiv; ++sd) {
+                Note n = parts[part][m*mdivision*sdivPerDiv+sd];
                 //printf("Note: %c %d\n", getNoteName(parts[3][i]), getNoteOctave(parts[3][i]));
                 char* flatstr = flat_p(n) ? "f" : "";
                 char* postNoteStr = flat_p(n) ? "" : " ";
