@@ -9,12 +9,6 @@
 #include "chordinfo.h"
 
 
-// bass range: E2 (24+4=28) to C4 (48)
-// tenor range: D3 (36+2=38) to G4 (48+7=55)
-// alto: G3 (36+7=43) to D5 (60+2=62)
-// Soprano: D4 (48+2=50) to G5 (60+7=67)
-
-
 
 void outputMD();
 
@@ -33,6 +27,14 @@ int main() {
     Note** parts;
     int** partsIntervals;
 
+// WTF -- I had these range min/max allocations after the malloc calls for the parts and it worked,
+// then I changed some other code and it magically broke.  Things were allocated on top of
+// each other.  Moving it here fixed it.  I have no idea why it's happening, I can't see
+// any bug.  It just looks like malloc was broken.  But I doubt that.  What's up???
+    rangemin = malloc(sizeof(int) * nparts);
+    rangemax = malloc(sizeof(int) * nparts);
+
+
     // Initialize parts array and intervals array
     parts = malloc(sizeof(Note*) * (nparts + 1));
     partsIntervals = malloc(sizeof(int*) * (nparts+1));
@@ -43,8 +45,6 @@ int main() {
     parts[nparts] = 0;
     partsIntervals[nparts] = 0;
 
-    rangemin = malloc(sizeof(int) * nparts);
-    rangemax = malloc(sizeof(int) * nparts);
 // bass range: E2 (24+4=28) to C4 (48)
 // tenor range: D3 (36+2=38) to G4 (48+7=55)
 // alto: G3 (36+7=43) to D5 (60+2=62)
@@ -61,7 +61,7 @@ int main() {
 
     // Generate random notes
     for (int i = 0; i < nparts; ++i) {
-        for (int j = 0; j < nmeasures * mdivision * sdivPerDiv; ++j) {
+        for (int j = 0; j < totalSubdivisions; ++j) {
             int rangediff = rangemax[i] - rangemin[i];
             int p = (rand() % rangediff) + rangemin[i];
             parts[i][j].pitch = p;

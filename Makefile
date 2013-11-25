@@ -1,6 +1,6 @@
 
 CC=gcc
-CFLAGS=-std=gnu99 -c
+CFLAGS=-std=gnu99 -c -g
 
 
 all: main.o notes.o chordinfo.o globalvars.o
