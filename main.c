@@ -20,30 +20,42 @@ void putIntervalArray(Note* part, int* intervals) {
     }
 }
 
+void partsCp(Note** srcParts, Note** dstParts) {
+}
+void partsIntervalsCp(int** src, int** dst) {
+}
+void chordInfoCp(ChordInfo* src, ChordInfo* dst) {
+}
+
 int main() {
     initGlobals();
     srand(time(NULL));
 
-    Note** parts;
-    int** partsIntervals;
+    Note **parts, **trialParts;
+    int **partsIntervals, **trialPartsIntervals;
+    ChordInfo *chordInfo, **trialChordInfo;
 
-// WTF -- I had these range min/max allocations after the malloc calls for the parts and it worked,
-// then I changed some other code and it magically broke.  Things were allocated on top of
-// each other.  Moving it here fixed it.  I have no idea why it's happening, I can't see
-// any bug.  It just looks like malloc was broken.  But I doubt that.  What's up???
-    rangemin = malloc(sizeof(int) * nparts);
-    rangemax = malloc(sizeof(int) * nparts);
 
 
     // Initialize parts array and intervals array
+    rangemin = malloc(sizeof(int) * nparts);
+    rangemax = malloc(sizeof(int) * nparts);
+    chordInfo = malloc(sizeof(ChordInfo) * nmeasures * mdivision);
+    trialChordInfo = malloc(sizeof(ChordInfo) * nmeasures * mdivision);
     parts = malloc(sizeof(Note*) * (nparts + 1));
+    trialParts = malloc(sizeof(Note*) * (nparts + 1));
     partsIntervals = malloc(sizeof(int*) * (nparts+1));
+    trialPartsIntervals = malloc(sizeof(int*) * (nparts+1));
     for (int i = 0; i < nparts; ++i) {
         parts[i] = malloc(sizeof(Note) * totalSubdivisions);
-        parts[i] = malloc(sizeof(int)  * totalSubdivisions);
+        trialParts[i] = malloc(sizeof(Note) * totalSubdivisions);
+        partsIntervals[i] = malloc(sizeof(int)  * totalSubdivisions);
+        trialPartsIntervals[i] = malloc(sizeof(int)  * totalSubdivisions);
     }
     parts[nparts] = 0;
+    trialParts[nparts] = 0;
     partsIntervals[nparts] = 0;
+    trialPartsIntervals[nparts] = 0;
 
 // bass range: E2 (24+4=28) to C4 (48)
 // tenor range: D3 (36+2=38) to G4 (48+7=55)
