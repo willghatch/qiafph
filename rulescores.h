@@ -11,6 +11,7 @@
 #define R_NO_CHORD_ON_BEAT -100
 #define R_NON_CHORD_SDIV -10
 #define R_CHORD_IN_NORMAL_KEY_CHORDS 50
+#define R_FULL_CHORD 200
 
 
 

@@ -40,6 +40,15 @@ int r_chord_in_normal_key_chords(ChordInfo* allchords, int key) {
     return score;
 }
 
+int r_full_chord(ChordInfo* allchords, int key) {
+    int score = 0;
+    for (int i = 0; i < nmeasures * mdivision; ++i) {
+        if (allchords[i].fullChordP) {
+            score += R_FULL_CHORD;
+        }
+    }
+    return score;
+}
 
 
 
@@ -97,6 +106,7 @@ int scorePiece(Note** parts, ChordInfo* chords, int** partsIntervals) {
     score += r_stepwise_in_key(parts, key);
     score += r_leading_tone_not_to_tonic(parts, key);
     score += r_chord_in_normal_key_chords(chords, key);
+    score += r_full_chord(chords, key);
     return score;
 }
 
