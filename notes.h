@@ -19,6 +19,21 @@
 
 #define C0 0
 
+
+#define KP_DO 0
+#define KP_RE 2
+#define KP_MI 4
+#define KP_FA 5
+#define KP_SOL 7
+#define KP_LA 9
+#define KP_TI 11
+// chromatic ones
+#define KP_RA 1
+#define KP_ME 3
+#define KP_SE 6
+#define KP_LE 8
+#define KP_TE 10
+
 struct notestruct {
     int pitch;
     int flags; 
@@ -30,5 +45,8 @@ typedef struct notestruct Note;
 char getNoteName(Note n);
 int flat_p(Note n);
 int getNoteOctave(Note n);
+int leadingToneP(int pitch, int key);
+int tonicNoteP(int pitch, int key);
+int stepwiseInKeyP(int p1, int p2, int key);
 
 #endif //NOTES_H

@@ -3,10 +3,13 @@
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "globalvars.h"
 #include "notes.h"
 #include "chordinfo.h"
+#include "mutations.h"
+#include "score.h"
 
 
 
@@ -21,10 +24,17 @@ void putIntervalArray(Note* part, int* intervals) {
 }
 
 void partsCp(Note** srcParts, Note** dstParts) {
+    for(int i = 0; i < nparts; ++i) {
+        memcpy(dstParts[i], srcParts[i], sizeof(Note)*totalSubdivisions);
+    }
 }
 void partsIntervalsCp(int** src, int** dst) {
+    for(int i = 0; i < nparts; ++i) {
+        memcpy(dst[i], src[i], sizeof(int)*totalSubdivisions);
+    }
 }
 void chordInfoCp(ChordInfo* src, ChordInfo* dst) {
+    memcpy(dst, src, sizeof(ChordInfo)*nmeasures*mdivision);
 }
 
 int main() {
@@ -33,13 +43,14 @@ int main() {
 
     Note **parts, **trialParts;
     int **partsIntervals, **trialPartsIntervals;
-    ChordInfo *chordInfo, **trialChordInfo;
+    ChordInfo *chordInfo, *trialChordInfo;
 
 
 
     // Initialize parts array and intervals array
     rangemin = malloc(sizeof(int) * nparts);
     rangemax = malloc(sizeof(int) * nparts);
+    rangediff = malloc(sizeof(int) * nparts);
     chordInfo = malloc(sizeof(ChordInfo) * nmeasures * mdivision);
     trialChordInfo = malloc(sizeof(ChordInfo) * nmeasures * mdivision);
     parts = malloc(sizeof(Note*) * (nparts + 1));
@@ -71,24 +82,70 @@ int main() {
     rangemax[2] = 62;
     rangemax[3] = 67;
 
+    for (int i = 0; i < nparts; ++i) {
+        rangediff[i] = rangemax[i] - rangemin[i];
+    }
+
     // Generate random notes
     for (int i = 0; i < nparts; ++i) {
         for (int j = 0; j < totalSubdivisions; ++j) {
-            int rangediff = rangemax[i] - rangemin[i];
-            int p = (rand() % rangediff) + rangemin[i];
+            int p = (rand() % rangediff[i]) + rangemin[i];
             parts[i][j].pitch = p;
             parts[i][j].flags = 0;
         }
     }
 
+    // do analysis
+    for(int i = 0; i < nparts; ++i) {
+        putIntervalArray(parts[i], partsIntervals[i]);
+    }
+    chordAnalyze_most(parts, chordInfo);
 
+    pieceScore = scorePiece(parts, chordInfo, partsIntervals);
 
+    int acceptedChangeP = 1;
+    int temp = 500;
+    int numPasses = 10000;
 
+    for(int i = 0; i < numPasses; ++i) {
+        acceptedChangeP = 0;
+        mutatePiece(trialParts);
+        for(int i = 0; i < nparts; ++i) {
+            putIntervalArray(trialParts[i], trialPartsIntervals[i]);
+        }
+        chordAnalyze_most(trialParts, trialChordInfo);
+
+        int trialScore = scorePiece(trialParts, trialChordInfo, trialPartsIntervals);
+
+        if (trialScore > pieceScore) {
+            acceptedChangeP = 1;
+        } else {
+            acceptedChangeP = 0;
+        }
+
+        if (acceptedChangeP) {
+            pieceScore = trialScore;
+            partsCp(trialParts, parts);
+            chordInfoCp(trialChordInfo, chordInfo);
+            partsIntervalsCp(trialPartsIntervals, partsIntervals);
+        } else {
+            partsCp(parts, trialParts);
+            chordInfoCp(chordInfo, trialChordInfo);
+            partsIntervalsCp(partsIntervals, trialPartsIntervals);
+        }
+
+    }
+    
+    // Copy current accepted state into trial state
+    partsCp(parts, trialParts);
+    chordInfoCp(chordInfo, trialChordInfo);
+    partsIntervalsCp(partsIntervals, trialPartsIntervals);
 
 
 
 
     outputMD(parts);
+    fprintf(stderr, "Piece Score: %d\n", pieceScore);
 }
 
 

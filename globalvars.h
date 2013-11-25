@@ -10,7 +10,9 @@ extern int nparts;
 extern int nmeasures;
 extern int* rangemin;
 extern int* rangemax;
+extern int* rangediff;
 extern int totalSubdivisions;
+extern int pieceScore;
 
 void initGlobals();
 

@@ -6,6 +6,8 @@ int nmeasures;
 int nparts;
 int* rangemin;
 int* rangemax;
+int* rangediff;
+int pieceScore;
 
 int totalSubdivisions;
 
