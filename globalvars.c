@@ -7,7 +7,7 @@ int nparts;
 int* rangemin;
 int* rangemax;
 int* rangediff;
-int pieceScore;
+long pieceScore;
 
 int totalSubdivisions;
 

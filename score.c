@@ -29,6 +29,16 @@ int r_non_chord_sdiv(ChordInfo* allchords, int key) {
     return score;
 }
 
+int r_chord_in_normal_key_chords(ChordInfo* allchords, int key) {
+    // Umm... assume it's major, I guess
+    int score = 0;
+    for (int i = 0; i < nmeasures * mdivision; ++i) {
+        if (allchords[i].numInPieceKey_M != 0) {
+            score += R_CHORD_IN_NORMAL_KEY_CHORDS;
+        }
+    }
+    return score;
+}
 
 
 
@@ -86,6 +96,7 @@ int scorePiece(Note** parts, ChordInfo* chords, int** partsIntervals) {
     score += r_non_chord_sdiv(chords, key);
     score += r_stepwise_in_key(parts, key);
     score += r_leading_tone_not_to_tonic(parts, key);
+    score += r_chord_in_normal_key_chords(chords, key);
     return score;
 }
 

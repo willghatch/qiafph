@@ -41,7 +41,8 @@ struct ChordInfoStruct {
     int fullChordP;
     int doubledNote;
     int numNonChordSdivs;
-    int numInPieceKey;
+    int numInPieceKey_m;
+    int numInPieceKey_M;
 };
 
 typedef struct ChordInfoStruct ChordInfo;
@@ -50,5 +51,6 @@ typedef struct ChordInfoStruct ChordInfo;
 
 void getChordInfo_most(int* sdivPitches, int npitches, ChordInfo* singleChord);
 void chordAnalyze_most(Note** parts, ChordInfo* chords);
+void chordAnalyze_putKeyAssociation(ChordInfo* chordInfo, int key);
 
 #endif //CHORDINFO_H

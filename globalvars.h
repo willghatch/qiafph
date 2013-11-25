@@ -12,7 +12,7 @@ extern int* rangemin;
 extern int* rangemax;
 extern int* rangediff;
 extern int totalSubdivisions;
-extern int pieceScore;
+extern long pieceScore;
 
 void initGlobals();
 

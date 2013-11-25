@@ -158,4 +158,35 @@ void chordAnalyze_most(Note** parts, ChordInfo* chords) {
     }
 }
 
+void chordAnalyze_putKeyAssociation(ChordInfo* chordInfo, int key) {
+    for(int i = 0; i < nmeasures*mdivision; ++i) {
+        int interval = (chordInfo[i].rootNote + key) % 12;
+        int m = 0;
+        int M = 0;
+        switch(interval) {
+            case I_UN:
+                M = m = 1; break;
+            case I_M2:
+                M = m = 2; break;
+            case I_m3:
+                m = 3; break;
+            case I_M3:
+                M = 3; break;
+            case I_P4:
+                M = m = 4; break;
+            case I_P5:
+                M = m = 5; break;
+            case I_m6:
+                m = 6; break;
+            case I_M6:
+                M = 6; break;
+            case I_m7:
+                m = 7; break;
+            case I_M7:
+                M = 7; break;
+        }
+        chordInfo[i].numInPieceKey_m = m;
+        chordInfo[i].numInPieceKey_M = M;
+    }
+}
 

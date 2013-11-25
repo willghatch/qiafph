@@ -44,6 +44,7 @@ int main() {
     Note **parts, **trialParts;
     int **partsIntervals, **trialPartsIntervals;
     ChordInfo *chordInfo, *trialChordInfo;
+    int key = 0; // key of C for now...
 
 
 
@@ -100,12 +101,24 @@ int main() {
         putIntervalArray(parts[i], partsIntervals[i]);
     }
     chordAnalyze_most(parts, chordInfo);
-
+    // TODO - find best fit key, maybe
+    chordAnalyze_putKeyAssociation(chordInfo, key);
     pieceScore = scorePiece(parts, chordInfo, partsIntervals);
 
+    // copy to trial versions
+    partsCp(parts, trialParts);
+    chordInfoCp(chordInfo, trialChordInfo);
+    partsIntervalsCp(partsIntervals, trialPartsIntervals);
+
+
+
     int acceptedChangeP = 1;
-    int temp = 500;
-    int numPasses = 10000;
+    double temperature = 5000;
+    double coolRate = 1;
+    double takechanceThresh = 1;
+    int numPasses = 20000;
+    int numAccepted = 0;
+    int numRejected = 0;
 
     for(int i = 0; i < numPasses; ++i) {
         acceptedChangeP = 0;
@@ -114,13 +127,16 @@ int main() {
             putIntervalArray(trialParts[i], trialPartsIntervals[i]);
         }
         chordAnalyze_most(trialParts, trialChordInfo);
+        chordAnalyze_putKeyAssociation(trialChordInfo, key);
 
-        int trialScore = scorePiece(trialParts, trialChordInfo, trialPartsIntervals);
+        long trialScore = scorePiece(trialParts, trialChordInfo, trialPartsIntervals);
 
-        if (trialScore > pieceScore) {
+        int scoreDiff = trialScore - pieceScore;
+        if (scoreDiff > 0) {
             acceptedChangeP = 1;
         } else {
-            acceptedChangeP = 0;
+            double takechance = -scoreDiff / temperature;
+            acceptedChangeP = takechance < takechanceThresh ? 1 : 0;
         }
 
         if (acceptedChangeP) {
@@ -128,10 +144,18 @@ int main() {
             partsCp(trialParts, parts);
             chordInfoCp(trialChordInfo, chordInfo);
             partsIntervalsCp(trialPartsIntervals, partsIntervals);
+            ++numAccepted;
         } else {
             partsCp(parts, trialParts);
             chordInfoCp(chordInfo, trialChordInfo);
             partsIntervalsCp(partsIntervals, trialPartsIntervals);
+            ++numRejected;
+        }
+
+        // Cool down
+        temperature -= coolRate;
+        if (temperature < 0) {
+            temperature = 0;
         }
 
     }
@@ -146,23 +170,26 @@ int main() {
 
     outputMD(parts);
     fprintf(stderr, "Piece Score: %d\n", pieceScore);
+    fprintf(stderr, "Acceptance rate: %f\n", (double)numAccepted / numPasses);
 }
 
 
 void outputMD(Note** parts) {
+    FILE* outfile = stdout;
+
     // Print header
-    printf("\n\n\n"); // first three lines blank
-    printf("01/02/13 Me\n"); // <Date> <Name of encoder>
-    printf("wk#:1 mvn:1\n"); // work and movement number
-    printf("sourcey source\n"); // source
-    printf("A work title could go here\n"); // work title
-    printf("1 0\n"); // movement title
-    //printf("This part\n"); // name of part
-    //printf("\n"); // misc designations - I don't know what they are
-    printf("group memberships: sound, score\n"); // group memberships
-    printf("sound: part 1 of 1\n"); // <name1>: part <x> of <number in group>
-    printf("score: part 1 of 1\n"); // <name1>: part <x> of <number in group>
-    printf("$  K:0  Q:2  T:4/4  C1:4\n");
+    fprintf(outfile, "\n\n\n"); // first three lines blank
+    fprintf(outfile, "01/02/13 Me\n"); // <Date> <Name of encoder>
+    fprintf(outfile, "wk#:1 mvn:1\n"); // work and movement number
+    fprintf(outfile, "sourcey source\n"); // source
+    fprintf(outfile, "A work title could go here\n"); // work title
+    fprintf(outfile, "1 0\n"); // movement title
+    //fprintf(outfile, "This part\n"); // name of part
+    //fprintf(outfile, "\n"); // misc designations - I don't know what they are
+    fprintf(outfile, "group memberships: sound, score\n"); // group memberships
+    fprintf(outfile, "sound: part 1 of 1\n"); // <name1>: part <x> of <number in group>
+    fprintf(outfile, "score: part 1 of 1\n"); // <name1>: part <x> of <number in group>
+    fprintf(outfile, "$  K:0  Q:2  T:4/4  C1:4\n");
     // K: key
     // Q: divisions per quarter note
     // T: time signature
@@ -170,17 +197,17 @@ void outputMD(Note** parts) {
 
     // print body
     for (int m = 1; m <= nmeasures; ++m) {
-        printf("measure %d\n", m);
+        fprintf(outfile, "measure %d\n", m);
         for (int part = 0; part < nparts; ++part) {
             if (part != 0) {
-                printf("back 8\n");
+                fprintf(outfile, "back 8\n");
             }
             for (int sd = 0; sd < mdivision*sdivPerDiv; ++sd) {
                 Note n = parts[part][m*mdivision*sdivPerDiv+sd];
-                //printf("Note: %c %d\n", getNoteName(parts[3][i]), getNoteOctave(parts[3][i]));
+                //fprintf(outfile, "Note: %c %d\n", getNoteName(parts[3][i]), getNoteOctave(parts[3][i]));
                 char* flatstr = flat_p(n) ? "f" : "";
                 char* postNoteStr = flat_p(n) ? "" : " ";
-                printf("%c%s%d%s   1\n", getNoteName(n), flatstr, getNoteOctave(n), postNoteStr); 
+                fprintf(outfile, "%c%s%d%s   1\n", getNoteName(n), flatstr, getNoteOctave(n), postNoteStr); 
                 // Col 1-4 note
                 // col 5 blank
                 // col 6-8 duration (right justified), 9 tie mark
@@ -189,7 +216,7 @@ void outputMD(Note** parts) {
     }
 
     // print ending stuff
-    printf("/END");
+    fprintf(outfile, "/END");
     // No ending newline!
 }
 
