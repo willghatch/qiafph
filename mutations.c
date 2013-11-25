@@ -1,6 +1,7 @@
 
 #include "globalvars.h"
 #include "notes.h"
+#include "chordinfo.h"
 #include <stdlib.h>
 
 
@@ -33,6 +34,10 @@ void changeNRandSdivisions(Note** parts, int n) {
     for (int i = 0; i < n; ++i) {
         changeRandSdivision(parts);
     }
+}
+
+void putRandSdivisionInChord(Note** parts, ChordInfo* chords) {
+    
 }
 
 

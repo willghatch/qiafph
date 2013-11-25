@@ -14,7 +14,7 @@ int totalSubdivisions;
 void initGlobals() {
     mdivision = 4;
     sdivPerDiv = 2;
-    nmeasures = 8;
+    nmeasures = 4;
     nparts = 4;
 
     totalSubdivisions = mdivision * sdivPerDiv * nmeasures;
