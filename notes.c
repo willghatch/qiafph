@@ -104,6 +104,10 @@ int stepwiseInKeyP(int p1, int p2, int key) {
                     return p1 - p2 == I_m2;
             }
         } else { // descending
+            if (p1 == p2) {
+                // same pitch
+                return 1;
+            }
             switch(p1KeyOffset) {
                 case KP_RE:
                 case KP_MI:

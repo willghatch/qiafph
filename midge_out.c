@@ -26,11 +26,23 @@ void outputMidge(Note** parts) {
         //fprintf(outfile, "\t@channel %d {\n", partno+1);
         fprintf(outfile, "\t@channel 1 {\n" );
         // patch 1 is piano
-        fprintf(outfile, "\t\t$patch 1\n");
+        // patch 55 is synth voice
+        fprintf(outfile, "\t\t$patch 53\n");
+        //int heldSdivs = 1;
         for (int gsdiv = 0; gsdiv < totalSubdivisions; ++gsdiv) {
             Note note = parts[partno][gsdiv];
+            /*if (gsdiv < totalSubdivisions-1) {
+                Note nextNote = parts[partno][gsdiv+1];
+                if (note.pitch == nextNote.pitch) {
+                    heldSdivs++;
+                    gsdiv++;
+                    continue;
+                }
+            }*/
             char* flatmaybe = flat_p(note) ? "-" : "";
             fprintf(outfile, "\t\t/l4/%c%s%d\n", getNoteName_lowercase(note), flatmaybe, getNoteOctave(note));
+            //fprintf(outfile, "\t\t/l%d:8/%c%s%d\n", heldSdivs, getNoteName_lowercase(note), flatmaybe, getNoteOctave(note));
+            //heldSdivs = 1;
         }
         fprintf(outfile, "\t}\n");
     }
