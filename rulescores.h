@@ -11,7 +11,7 @@
 #define R_NO_CHORD_ON_BEAT -100
 #define R_NON_CHORD_SDIV -10
 #define R_CHORD_IN_NORMAL_KEY_CHORDS 100
-#define R_FULL_CHORD 300
+#define R_FULL_CHORD 200
 
 #define R_START_CHORD__I 300
 #define R_START_CHORD__V 250
@@ -49,9 +49,9 @@
 
 
 ////  Melody Rules
-#define R_STEPWISE_IN_KEY 35
+#define R_STEPWISE_IN_KEY 60
 #define R_LEADING_TONE_NOT_TO_TONIC -100
-#define R_NOTE_NOT_IN_KEY -30
+#define R_NOTE_NOT_IN_KEY -100
 
 
 

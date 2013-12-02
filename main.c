@@ -123,7 +123,7 @@ int main() {
     double temperature = 5000;
     double coolRate = 1;
     double takechanceThresh = 1;
-    int numPasses = 20000;
+    int numPasses = 40000;
     int numAccepted = 0;
     int numRejected = 0;
 
