@@ -30,6 +30,11 @@ char getNoteName(Note n) {
     }
 }
 
+char getNoteName_lowercase(Note n) {
+    char c = getNoteName(n);
+    return c + 32;
+}
+
 int flat_p(Note n) {
     int p = n.pitch % 12;
     switch(p) {

@@ -43,6 +43,7 @@ struct notestruct {
 typedef struct notestruct Note;
 
 char getNoteName(Note n);
+char getNoteName_lowercase(Note n);
 int flat_p(Note n);
 int getNoteOctave(Note n);
 int leadingToneP(int pitch, int key);
