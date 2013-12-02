@@ -69,6 +69,23 @@ int tonicNoteP(int pitch, int key) {
     return pitch == key;
 }
 
+int noteInKeyP(Note n, int key) {
+    int p = n.pitch;
+    p = (p + key) % 12;
+    switch(p) {
+        case KP_DO:
+        case KP_RE:
+        case KP_MI:
+        case KP_FA:
+        case KP_SOL:
+        case KP_LA:
+        case KP_TI:
+            return 1;
+        default:
+            return 0;
+    }
+}
+
 int stepwiseInKeyP(int p1, int p2, int key) {
     int p1KeyOffset = (p1 + key) % 12;
     //if( this is a major key) {

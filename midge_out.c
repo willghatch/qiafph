@@ -16,13 +16,15 @@ void outputMidge(Note** parts) {
     // Print header
     fprintf(outfile, "@head {\n");
     fprintf(outfile, "\t$time_sig 4/4\n");
-    fprintf(outfile, "\t$tempo 80\n");
+    fprintf(outfile, "\t$tempo 120\n");
     fprintf(outfile, "}\n");
 
     fprintf(outfile, "@body {\n");
 
-    for (int partno = 0; partno < nparts; ++partno) {
-        fprintf(outfile, "\t@channel %d {\n", partno+1);
+    //for (int partno = 0; partno < nparts; ++partno) {
+    for (int partno = 3; partno >= 0; --partno) {
+        //fprintf(outfile, "\t@channel %d {\n", partno+1);
+        fprintf(outfile, "\t@channel 1 {\n" );
         // patch 1 is piano
         fprintf(outfile, "\t\t$patch 1\n");
         for (int gsdiv = 0; gsdiv < totalSubdivisions; ++gsdiv) {

@@ -48,6 +48,7 @@ int flat_p(Note n);
 int getNoteOctave(Note n);
 int leadingToneP(int pitch, int key);
 int tonicNoteP(int pitch, int key);
+int noteInKeyP(Note n, int key);
 int stepwiseInKeyP(int p1, int p2, int key);
 
 #endif //NOTES_H
