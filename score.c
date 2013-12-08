@@ -1,3 +1,6 @@
+// score.c
+
+#include <stdlib.h>
 
 #include "globalvars.h"
 #include "notes.h"
@@ -273,6 +276,9 @@ int r_part_doubling(Note** parts, ChordInfo* allchords, int key) {
         if (numPartsOnNote(fifthPitch, i, parts) > 1) {
             score += R_DOUBLE_FIFTH;
         }
+        if (numPartsOnNote((key + 11)%12, i, parts) > 1) {
+            score += R_DOUBLE_LEADING_TONE;
+        }
     }
     return score;
 }
@@ -341,7 +347,7 @@ int r_leading_tone_not_to_tonic(Note** parts, int key) {
 int r_note_not_in_key(Note** parts, int key) {
     int score = 0;
     for (int part = 0; part < nparts; ++part) {
-        for (int sdiv = 0; sdiv < totalSubdivisions-1; ++sdiv) {
+        for (int sdiv = 0; sdiv < totalSubdivisions; ++sdiv) {
             Note note = parts[part][sdiv];
             if (!noteInKeyP(note, key)) {
                 score += R_NOTE_NOT_IN_KEY;
@@ -350,6 +356,22 @@ int r_note_not_in_key(Note** parts, int key) {
     }
     return score;
 }
+
+int r_tritone_leap(Note** parts, int key) {
+    int score = 0;
+    for (int part = 0; part < nparts; ++part) {
+        for (int sdiv = 0; sdiv < totalSubdivisions-1; ++sdiv) {
+            Note n1 = parts[part][sdiv];
+            Note n2 = parts[part][sdiv+1];
+            int diff = abs(n1.pitch-n2.pitch) % 12;
+            if (diff == I_d5) {
+                score += R_TRITONE_LEAP;
+            }
+        }
+    }
+    return score;
+}
+
 
 
 
@@ -379,6 +401,7 @@ int scorePiece(Note** parts, ChordInfo* chords, int** partsIntervals) {
     score += r_chord_progressions(chords, key);
     score += r_no_non_chord_tones(chords, key);
     score += r_only_use_I_IV_V(chords, key);
+    score += r_tritone_leap(parts, key);
     return score;
 }
 

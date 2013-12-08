@@ -3,13 +3,21 @@
 if [ 0 -eq $# ]
 then
     echo "usage:"
-    echo "midig.sh <name>"
+    echo "midig.sh <name> [-a]"
     #echo "generates <name>.md and <name>.mid"
     echo "generates <name>.mg and <name>.mid"
+    echo "also generates <name>.a analysis file if -a given"
     exit 0
 fi
 
 name=$1
+
+if [ "str$2" = "str-a" ]
+then
+    analysisStr="-a ${name}.a"
+else
+    analysisStr=""
+fi
 
 if type mgen 1>/dev/null 2>&1 
 then
@@ -36,7 +44,7 @@ else
 fi
 
 
-$cmd -m "${name}.mg"
+$cmd -m "${name}.mg" $analysisStr
 
 #mscore -o ${name}.mid ${name}.md
 $MIDGE ${name}.mg

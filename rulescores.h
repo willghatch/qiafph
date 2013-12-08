@@ -23,6 +23,7 @@
 #define R_DOUBLE_ROOT 40
 #define R_DOUBLE_THIRD -20
 #define R_DOUBLE_FIFTH 0
+#define R_DOUBLE_LEADING_TONE -100
 
 // This one is a joke
 #define R_ONLY_USE_I_IV_V 200
@@ -67,6 +68,7 @@
 #define R_STEPWISE_IN_KEY 60
 #define R_LEADING_TONE_NOT_TO_TONIC -100
 #define R_NOTE_NOT_IN_KEY -100
+#define R_TRITONE_LEAP -200
 
 
 
