@@ -3,7 +3,7 @@ CC=gcc
 DEBUGFLAGS=-g
 OPTIMIZEFLAGS=-O2
 CFLAGS=-std=gnu99 -c $(OPTIMIZEFLAGS)
-OBJECTS=main.o notes.o chordinfo.o globalvars.o score.o mutations.o md_out.o midge_out.o
+OBJECTS=main.o notes.o chordinfo.o globalvars.o score.o mutations.o md_out.o midge_out.o analysis_out.o
 
 
 all: $(OBJECTS) rulescores.h

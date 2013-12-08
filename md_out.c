@@ -53,5 +53,7 @@ void outputMD(Note** parts, char* file) {
     // print ending stuff
     fprintf(outfile, "/END");
     // No ending newline!
+
+    fclose(outfile);
 }
 

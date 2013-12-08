@@ -16,6 +16,7 @@
 
 void outputMD();
 void outputMidge();
+void outputAnalysis();
 
 void putIntervalArray(Note* part, int* intervals) {
     // intervals has to be size of part-1
@@ -275,6 +276,9 @@ int main(int argc, char** argv) {
     }
     if (midgeOutFile != NULL) {
         outputMidge(parts, midgeOutFile);
+    }
+    if (analysisOutFile != NULL) {
+        outputAnalysis(analysisOutFile, parts, chordInfo);
     }
 
     if (verboseP) {

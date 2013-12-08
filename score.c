@@ -375,6 +375,7 @@ int scorePiece(Note** parts, ChordInfo* chords, int** partsIntervals) {
     score += r_part_doubling(parts, chords, key);
     score += r_voice_cross(parts);
     score += r_octave_distance_not_bass(parts);
+    score += r_chord_progressions(chords, key);
     return score;
 }
 

@@ -50,5 +50,6 @@ void outputMidge(Note** parts, char* file) {
     // end body
     fprintf(outfile, "}\n");
 
+    fclose(outfile);
 }
 
