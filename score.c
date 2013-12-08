@@ -29,35 +29,22 @@ int r_non_chord_sdiv(ChordInfo* allchords, int key) {
     return score;
 }
 
+int r_no_non_chord_tones(ChordInfo* allchords, int key) {
+    int score = 0;
+    for (int i = 0; i < nmeasures * mdivision; ++i) {
+        if (allchords[i].numNonChordSdivs == 0) {
+            score += R_NO_NON_CHORD_TONES;
+        }
+    }
+    return score;
+}
+
 int r_chord_in_normal_key_chords_major(ChordInfo* allchords, int key) {
     // Umm... assume it's major, I guess
     int score = 0;
     for (int i = 0; i < nmeasures * mdivision; ++i) {
-        // TODO - allow minor
-        if (1) {// major
-            switch(allchords[i].numInPieceKey) {
-                case 1:
-                    if (allchords[i].type == ch_maj) {score += R_CHORD_IN_NORMAL_KEY_CHORDS;}
-                    break;
-                case 2:
-                    if (allchords[i].type == ch_min) {score += R_CHORD_IN_NORMAL_KEY_CHORDS;}
-                    break;
-                case 3:
-                    if (allchords[i].type == ch_min) {score += R_CHORD_IN_NORMAL_KEY_CHORDS;}
-                    break;
-                case 4:
-                    if (allchords[i].type == ch_maj) {score += R_CHORD_IN_NORMAL_KEY_CHORDS;}
-                    break;
-                case 5:
-                    if (allchords[i].type == ch_maj) {score += R_CHORD_IN_NORMAL_KEY_CHORDS;}
-                    break;
-                case 6:
-                    if (allchords[i].type == ch_min) {score += R_CHORD_IN_NORMAL_KEY_CHORDS;}
-                    break;
-                case 7:
-                    if (allchords[i].type == ch_dim) {score += R_CHORD_IN_NORMAL_KEY_CHORDS;}
-                    break;
-            }
+        if (allchords[i].inNormalKeyChordsP) {
+            score += R_CHORD_IN_NORMAL_KEY_CHORDS;
         }
     }
     return score;
@@ -97,6 +84,20 @@ int r_end_cadence(ChordInfo* allchords, int key) {
         }
     }
     return 0;
+}
+
+int r_only_use_I_IV_V(ChordInfo* allchords, int key) {
+    int score = 0;
+    for (int i = 0; i < nmeasures * mdivision; ++i) {
+        ChordInfo c = allchords[i];
+        if (c.type == ch_maj) {
+            if (c.numInPieceKey == 1 || c.numInPieceKey == 4 || c.numInPieceKey == 5) {
+                score += R_ONLY_USE_I_IV_V;
+            }
+        }
+
+    }
+    return score;
 }
 
 int r_chord_progressions(ChordInfo* allchords, int key) {
@@ -376,6 +377,8 @@ int scorePiece(Note** parts, ChordInfo* chords, int** partsIntervals) {
     score += r_voice_cross(parts);
     score += r_octave_distance_not_bass(parts);
     score += r_chord_progressions(chords, key);
+    score += r_no_non_chord_tones(chords, key);
+    score += r_only_use_I_IV_V(chords, key);
     return score;
 }
 

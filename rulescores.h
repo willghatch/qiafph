@@ -12,6 +12,7 @@
 #define R_NON_CHORD_SDIV -10
 #define R_CHORD_IN_NORMAL_KEY_CHORDS 100
 #define R_FULL_CHORD 200
+#define R_NO_NON_CHORD_TONES 100
 
 #define R_START_CHORD__I 300
 #define R_START_CHORD__V 250
@@ -22,6 +23,9 @@
 #define R_DOUBLE_ROOT 40
 #define R_DOUBLE_THIRD -20
 #define R_DOUBLE_FIFTH 0
+
+// This one is a joke
+#define R_ONLY_USE_I_IV_V 200
 
 
 // Chord progressions

@@ -69,10 +69,12 @@ void getChordInfo_most(int* sdivPitches, int npitches, ChordInfo* singleChord) {
 
     int bestFitRoot = 0;
     int bestFitScore = 0;
-    int intervals[12] = {0}; //best fit ones
+    int intervals[12]; //best fit ones
+    memset(intervals, 0, sizeof(int) * 12);
     for(int note = 0; note < 12; ++note) {
         int score = 0;
-        int temp_intervals[12] = {0};
+        int temp_intervals[12];
+        memset(temp_intervals, 0, sizeof(int) * 12);
         // Check each note to see if it could be the root
         for(int sd = 0; sd < npitches; ++sd) {
             int interval = (sdivPitches[sd] + 12 - note) % 12;
@@ -100,6 +102,7 @@ void getChordInfo_most(int* sdivPitches, int npitches, ChordInfo* singleChord) {
         }
         if (score > bestFitScore) {
             bestFitRoot = note;
+            bestFitScore = score;
             memcpy(intervals, temp_intervals, 12*sizeof(int));
         }
     } // Now we have the best fit root of all.

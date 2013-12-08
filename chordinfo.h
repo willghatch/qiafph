@@ -18,11 +18,11 @@
 #define I_m7 10
 #define I_M7 11
 
-#define CH_SC_UNISON 125
+#define CH_SC_UNISON 200
 #define CH_SC_m3 75
 #define CH_SC_M3 75
-#define CH_SC_p5 90
-#define CH_SC_d5 30
+#define CH_SC_p5 100
+#define CH_SC_d5 40
 #define CH_SC_d7 10
 #define CH_SC_m7 20
 #define CH_SC_M7 30
