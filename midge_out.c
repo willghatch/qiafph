@@ -10,8 +10,9 @@
 #include "score.h"
 
 
-void outputMidge(Note** parts) {
-    FILE* outfile = stdout;
+void outputMidge(Note** parts, char* file) {
+    
+    FILE* outfile = fopen(file, "w");
 
     // Print header
     fprintf(outfile, "@head {\n");
@@ -22,7 +23,7 @@ void outputMidge(Note** parts) {
     fprintf(outfile, "@body {\n");
 
     //for (int partno = 0; partno < nparts; ++partno) {
-    for (int partno = 3; partno >= 0; --partno) {
+    for (int partno = nparts-1; partno >= 0; --partno) {
         //fprintf(outfile, "\t@channel %d {\n", partno+1);
         fprintf(outfile, "\t@channel 1 {\n" );
         // patch 1 is piano

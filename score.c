@@ -29,12 +29,35 @@ int r_non_chord_sdiv(ChordInfo* allchords, int key) {
     return score;
 }
 
-int r_chord_in_normal_key_chords(ChordInfo* allchords, int key) {
+int r_chord_in_normal_key_chords_major(ChordInfo* allchords, int key) {
     // Umm... assume it's major, I guess
     int score = 0;
     for (int i = 0; i < nmeasures * mdivision; ++i) {
-        if (allchords[i].numInPieceKey_M != 0) {
-            score += R_CHORD_IN_NORMAL_KEY_CHORDS;
+        // TODO - allow minor
+        if (1) {// major
+            switch(allchords[i].numInPieceKey) {
+                case 1:
+                    if (allchords[i].type == ch_maj) {score += R_CHORD_IN_NORMAL_KEY_CHORDS;}
+                    break;
+                case 2:
+                    if (allchords[i].type == ch_min) {score += R_CHORD_IN_NORMAL_KEY_CHORDS;}
+                    break;
+                case 3:
+                    if (allchords[i].type == ch_min) {score += R_CHORD_IN_NORMAL_KEY_CHORDS;}
+                    break;
+                case 4:
+                    if (allchords[i].type == ch_maj) {score += R_CHORD_IN_NORMAL_KEY_CHORDS;}
+                    break;
+                case 5:
+                    if (allchords[i].type == ch_maj) {score += R_CHORD_IN_NORMAL_KEY_CHORDS;}
+                    break;
+                case 6:
+                    if (allchords[i].type == ch_min) {score += R_CHORD_IN_NORMAL_KEY_CHORDS;}
+                    break;
+                case 7:
+                    if (allchords[i].type == ch_dim) {score += R_CHORD_IN_NORMAL_KEY_CHORDS;}
+                    break;
+            }
         }
     }
     return score;
@@ -51,7 +74,7 @@ int r_full_chord(ChordInfo* allchords, int key) {
 }
 
 int r_start_chord(ChordInfo* allchords, int key) {
-    int sc = allchords[0].numInPieceKey_M;
+    int sc = allchords[0].numInPieceKey;
     switch (sc) {
         case 1:
             return R_START_CHORD__I;
@@ -65,11 +88,11 @@ int r_start_chord(ChordInfo* allchords, int key) {
 int r_end_cadence(ChordInfo* allchords, int key) {
     // TODO - write functions to get cadence info and make this better
     int ecIndex = nmeasures * mdivision - 1;
-    if (allchords[ecIndex].numInPieceKey_M == 1) {
+    if (allchords[ecIndex].numInPieceKey == 1) {
         ChordInfo ntl = allchords[ecIndex-1];
-        if (ntl.numInPieceKey_M == 5) {
+        if (ntl.numInPieceKey == 5) {
             return R_END_CADENCE__AUTHENTIC;
-        } else if (ntl.numInPieceKey_M == 4) {
+        } else if (ntl.numInPieceKey == 4) {
             return R_END_CADENCE__PLAGAL;
         }
     }
@@ -81,9 +104,9 @@ int r_chord_progressions(ChordInfo* allchords, int key) {
     for (int i = 1; i < nmeasures * mdivision; ++i) {
         ChordInfo a = allchords[i-1];
         ChordInfo b = allchords[i];
-        switch(a.numInPieceKey_M) {
+        switch(a.numInPieceKey) {
             case 1:
-                switch(b.numInPieceKey_M) {
+                switch(b.numInPieceKey) {
                     case 1:
                         break;
                     case 2:
@@ -105,7 +128,7 @@ int r_chord_progressions(ChordInfo* allchords, int key) {
                 }
                 break;
             case 2:
-                switch(b.numInPieceKey_M) {
+                switch(b.numInPieceKey) {
                     case 1:
                         break;
                     case 2:
@@ -125,7 +148,7 @@ int r_chord_progressions(ChordInfo* allchords, int key) {
                 }
                 break;
             case 3:
-                switch(b.numInPieceKey_M) {
+                switch(b.numInPieceKey) {
                     case 1:
                         break;
                     case 2:
@@ -145,7 +168,7 @@ int r_chord_progressions(ChordInfo* allchords, int key) {
                 }
                 break;
             case 4:
-                switch(b.numInPieceKey_M) {
+                switch(b.numInPieceKey) {
                     case 1:
                         score += R_CHORD_PROG__IV_I;
                         break;
@@ -167,7 +190,7 @@ int r_chord_progressions(ChordInfo* allchords, int key) {
                 }
                 break;
             case 5:
-                switch(b.numInPieceKey_M) {
+                switch(b.numInPieceKey) {
                     case 1:
                         score += R_CHORD_PROG__V_I;
                         break;
@@ -187,7 +210,7 @@ int r_chord_progressions(ChordInfo* allchords, int key) {
                 }
                 break;
             case 6:
-                switch(b.numInPieceKey_M) {
+                switch(b.numInPieceKey) {
                     case 1:
                         break;
                     case 2:
@@ -208,7 +231,7 @@ int r_chord_progressions(ChordInfo* allchords, int key) {
                 }
                 break;
             case 7:
-                switch(b.numInPieceKey_M) {
+                switch(b.numInPieceKey) {
                     case 1:
                         score += R_CHORD_PROG__viid_I;
                         break;
@@ -232,6 +255,50 @@ int r_chord_progressions(ChordInfo* allchords, int key) {
     return score;
 }
 
+
+int r_part_doubling(Note** parts, ChordInfo* allchords, int key) {
+    int score = 0;
+    for (int i = 0; i < nmeasures * mdivision; ++i) {
+        ChordInfo c = allchords[i];
+        int rootPitch = c.rootNote;
+        int thirdPitch = (rootPitch + (majorChordP(c.type) ? I_M3 : I_m3)) % 12;
+        int fifthPitch = (rootPitch + (diminishedChordP(c.type) ? I_d5 : I_P5)) % 12;
+        if (numPartsOnNote(rootPitch, i, parts) > 1) {
+            score += R_DOUBLE_ROOT;
+        }
+        if (numPartsOnNote(thirdPitch, i, parts) > 1) {
+            score += R_DOUBLE_THIRD;
+        }
+        if (numPartsOnNote(fifthPitch, i, parts) > 1) {
+            score += R_DOUBLE_FIFTH;
+        }
+    }
+    return score;
+}
+
+int r_voice_cross(Note** parts) {
+    int score = 0;
+    for (int part = 0; part < nparts-1; ++part) {
+        for (int sdiv = 0; sdiv < totalSubdivisions; ++sdiv) {
+            if (parts[part][sdiv].pitch > parts[part+1][sdiv].pitch) {
+                score += R_VOICE_CROSS;
+            }
+        }
+    }
+    return score;
+}
+
+int r_octave_distance_not_bass(Note** parts) {
+    int score = 0;
+    for (int part = 1; part < nparts-1; ++part) {
+        for (int sdiv = 0; sdiv < totalSubdivisions; ++sdiv) {
+            if (parts[part][sdiv].pitch + 12 < parts[part][sdiv].pitch) {
+                score += R_OCTAVE_DISTANCE_NOT_BASS;
+            }
+        }
+    }
+    return score;
+}
 
 
 
@@ -301,10 +368,13 @@ int scorePiece(Note** parts, ChordInfo* chords, int** partsIntervals) {
     score += r_stepwise_in_key(parts, key);
     score += r_leading_tone_not_to_tonic(parts, key);
     score += r_note_not_in_key(parts, key);
-    score += r_chord_in_normal_key_chords(chords, key);
+    score += r_chord_in_normal_key_chords_major(chords, key); // TODO -- add minor
     score += r_full_chord(chords, key);
     score += r_start_chord(chords, key);
     score += r_end_cadence(chords, key);
+    score += r_part_doubling(parts, chords, key);
+    score += r_voice_cross(parts);
+    score += r_octave_distance_not_bass(parts);
     return score;
 }
 

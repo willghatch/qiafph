@@ -36,7 +36,7 @@ else
 fi
 
 
-$cmd > "${name}.mg"
+$cmd -m "${name}.mg"
 
 #mscore -o ${name}.mid ${name}.md
 $MIDGE ${name}.mg

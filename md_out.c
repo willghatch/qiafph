@@ -9,8 +9,8 @@
 #include "mutations.h"
 #include "score.h"
 
-void outputMD(Note** parts) {
-    FILE* outfile = stdout;
+void outputMD(Note** parts, char* file) {
+    FILE* outfile = fopen(file, "w");
 
     // Print header
     fprintf(outfile, "\n\n\n"); // first three lines blank

@@ -19,7 +19,12 @@
 #define R_END_CADENCE__AUTHENTIC 400
 #define R_END_CADENCE__PLAGAL 350 
 
+#define R_DOUBLE_ROOT 40
+#define R_DOUBLE_THIRD -20
+#define R_DOUBLE_FIFTH 0
 
+
+// Chord progressions
 #define R_CHORD_PROG__I_IV 200
 #define R_CHORD_PROG__I_V 50
 #define R_CHORD_PROG__I_ii 20
@@ -45,6 +50,12 @@
 
 #define R_CHORD_PROG__viid_I 60
 #define R_CHORD_PROG__viid_V 40
+
+
+
+
+#define R_VOICE_CROSS -50
+#define R_OCTAVE_DISTANCE_NOT_BASS -40
 
 
 

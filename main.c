@@ -4,6 +4,7 @@
 #include <time.h>
 #include <stdio.h>
 #include <string.h>
+#include <getopt.h>
 
 #include "globalvars.h"
 #include "notes.h"
@@ -38,7 +39,91 @@ void chordInfoCp(ChordInfo* src, ChordInfo* dst) {
     memcpy(dst, src, sizeof(ChordInfo)*nmeasures*mdivision);
 }
 
-int main() {
+void printHelp(int exitStatus) {
+    fprintf(stderr, "Four Part Harmony Generator\n");
+    fprintf(stderr, "Written by William Hatch for CS 5600 at USU\n");
+    fprintf(stderr, "Generates four part harmony.  Configured at the moment in source\n");
+    fprintf(stderr, "in rulescores.h and globalvars.h\n");
+    fprintf(stderr, "Options:\n");
+    fprintf(stderr, "-m <file>  --midge <file>      Midge output file\n");
+//    fprintf(stderr, "-M <file>  --musedata <file>   MuseData output file\n");
+    fprintf(stderr, "-a <file>  --analysis <file>   Analysis info output file\n");
+    fprintf(stderr, "-n <int>   --nparts <int>      Number of parts (default 4, must be > 2)\n");
+    fprintf(stderr, "-v         --verbose           Print some extra info to stderr\n");
+    fprintf(stderr, "-h         --help              Print this message to stderr\n");
+    fprintf(stderr, "\nA music output format (midge or musedata) must be supplied\n");
+    exit(exitStatus);
+}
+
+int main(int argc, char** argv) {
+    
+    char* midgeOutFile = NULL;
+    char* museDataOutFile = NULL;
+    char* analysisOutFile = NULL;
+    verboseP = 0;
+    nparts = 4;
+    int printHelpP = 0;
+
+    struct option long_options[] =
+        {
+            {"midge",     required_argument,  0,   'm'},
+//            {"musedata",  required_argument,  0,   'M'},
+            {"analysis",  required_argument,  0,   'a'},
+            {"nparts",    required_argument,  0,   'n'},
+            {"help",      no_argument,        0,   'h'},
+            {"verbose",   no_argument,        0,   'v'},
+            {0,0,0,0}
+        };
+
+    // Get command line options
+    while (1) {
+        int c;
+        int option_index = 0;
+        c = getopt_long(argc, argv, "vhn:m:a:", long_options, &option_index);
+
+        if (c == -1) {
+            break;
+        }
+
+        switch(c) {
+            case 'h':
+                printHelpP = 1;
+                break;
+            case 'm':
+                midgeOutFile = optarg;
+                break;
+//            case 'M':
+//                museDataOutFile = optarg;
+            case 'a':
+                analysisOutFile = optarg;
+                break;
+            case 'v':
+                verboseP = 1;;
+                break;
+            case 'n':
+                nparts = atoi(optarg);
+                if (nparts < 2) {printHelp(1);}
+                break;
+            case '?':
+                printHelp(1);
+                break;
+            default:
+                printHelp(1);
+                break;
+        }
+    }
+
+    if(printHelpP) {
+        printHelp(0);
+    }
+
+    if (museDataOutFile == NULL && midgeOutFile == NULL) {
+        printHelp(1);
+    }
+
+
+
+    // Initialize
     initGlobals();
     srand(time(NULL));
 
@@ -70,24 +155,36 @@ int main() {
     partsIntervals[nparts] = 0;
     trialPartsIntervals[nparts] = 0;
 
-// bass range: E2 (24+4=28) to C4 (48)
-// tenor range: D3 (36+2=38) to G4 (48+7=55)
-// alto: G3 (36+7=43) to D5 (60+2=62)
-// Soprano: D4 (48+2=50) to G5 (60+7=67)
+    // bass range: E2 (24+4=28) to C4 (48)
+    // tenor range: D3 (36+2=38) to G4 (48+7=55)
+    // alto: G3 (36+7=43) to D5 (60+2=62)
+    // Soprano: D4 (48+2=50) to G5 (60+7=67)
     rangemin[0] = 28;
-    rangemin[1] = 38;
-    rangemin[2] = 43;
-    rangemin[3] = 50;
-    
     rangemax[0] = 48;
+    rangemin[1] = 38;
     rangemax[1] = 55;
-    rangemax[2] = 62;
-    rangemax[3] = 67;
+    if (nparts > 2) {
+        rangemin[2] = 43;
+        rangemax[2] = 62;
+    }
+    if (nparts > 3) {
+        rangemin[3] = 50;
+        rangemax[3] = 67;
+    }
+    if (nparts > 4) {
+        for(int i = 4; i < nparts; ++i) {
+            rangemin[i] = rangemin[i-1] + 10;
+            rangemax[i] = rangemax[i-1] + 10;
+        }
+    }
+    
 
     // I think I got the ranges off... I'm going to boost them a little
-    for(int i = 0; i < 4; ++i) {
-        rangemin[i] += 12;
-        rangemax[i] += 12;
+    if (nparts <= 4) {
+        for(int i = 0; i < nparts; ++i) {
+            rangemin[i] += 12;
+            rangemax[i] += 12;
+    }
     }
 
     for (int i = 0; i < nparts; ++i) {
@@ -173,11 +270,17 @@ int main() {
     partsIntervalsCp(partsIntervals, trialPartsIntervals);
 
 
-    //outputMD(parts);
-    outputMidge(parts);
+    if (museDataOutFile != NULL) {
+        outputMD(parts, museDataOutFile);
+    }
+    if (midgeOutFile != NULL) {
+        outputMidge(parts, midgeOutFile);
+    }
 
-    fprintf(stderr, "Piece Score: %d\n", pieceScore);
-    fprintf(stderr, "Acceptance rate: %f\n", (double)numAccepted / numPasses);
+    if (verboseP) {
+        fprintf(stderr, "Piece Score: %d\n", pieceScore);
+        fprintf(stderr, "Acceptance rate: %f\n", (double)numAccepted / numPasses);
+    }
 }
 
 

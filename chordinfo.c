@@ -14,7 +14,10 @@ int minorChordP(ChordType t) {
     return t == ch_min || t == ch_min_7;
 }
 int diminishedChordP(ChordType t) {
-    return t == ch_dim || t == ch_halfdim_7 || ch_fulldim_7;
+    return t == ch_dim || t == ch_halfdim_7 || t == ch_fulldim_7;
+}
+int majorChordP(ChordType t) {
+    return t == ch_maj || t == ch_maj_7;
 }
 
 int countNonChordTones(int* intervalCount, int sdivs, ChordType ct, int* fullChordP) {
@@ -161,32 +164,94 @@ void chordAnalyze_most(Note** parts, ChordInfo* chords) {
 void chordAnalyze_putKeyAssociation(ChordInfo* chordInfo, int key) {
     for(int i = 0; i < nmeasures*mdivision; ++i) {
         int interval = (chordInfo[i].rootNote + key) % 12;
+        ChordType t = chordInfo[i].type;
+        // Normal chord in major/minor
         int m = 0;
         int M = 0;
+        int num = 0;
         switch(interval) {
             case I_UN:
-                M = m = 1; break;
+                M = majorChordP(t);
+                m = minorChordP(t);
+                num = 1;
+                break;
+            case I_m2:
+                M = 0;
+                m = 0;
+                num = 2;
+                break;
             case I_M2:
-                M = m = 2; break;
+                M = minorChordP(t);
+                m = diminishedChordP(t);
+                num = 2;
+                break;
             case I_m3:
-                m = 3; break;
+                M = 0;
+                m = majorChordP(t);
+                num = 3; 
+                break;
             case I_M3:
-                M = 3; break;
+                M = minorChordP(t);
+                m = 0;
+                num = 3; 
+                break;
             case I_P4:
-                M = m = 4; break;
+                M = majorChordP(t);
+                m = minorChordP(t);
+                num = 4; 
+                break;
+            case I_d5:
+                M = 0;
+                m = 0; 
+                num = 5;
+                break;
             case I_P5:
-                M = m = 5; break;
+                M = majorChordP(t);
+                m = minorChordP(t) || majorChordP(t); // Maybe only major since everyone uses the harmonic, but I'll allow both... TODO - make configurable
+                num = 5; 
+                break;
             case I_m6:
-                m = 6; break;
+                M = 0;
+                m = majorChordP(t);
+                num = 6; 
+                break;
             case I_M6:
-                M = 6; break;
+                M = minorChordP(t);
+                m = 0;
+                num = 6; 
+                break;
             case I_m7:
-                m = 7; break;
+                M = 0;
+                m = majorChordP(t); // if not harmonic
+                num = 7; 
+                break;
             case I_M7:
-                M = 7; break;
+                M = diminishedChordP(t);
+                m = diminishedChordP(t);
+                num = 7; 
+                break;
         }
-        chordInfo[i].numInPieceKey_m = m;
-        chordInfo[i].numInPieceKey_M = M;
+        chordInfo[i].inNormalKeyChordsP = M; // TODO -- add minor support
+        chordInfo[i].numInPieceKey = num;
     }
+}
+
+int numPartsOnNote(int pitch, int mdivNum, Note** parts) {
+// returns the number of parts that have a given pitch in a major division
+    int onPitch[nparts];
+    memset(onPitch, 0, sizeof(int) * nparts);
+    int sdivNum = mdivNum * sdivPerDiv;
+    for (int i = 0; i < nparts; ++i) {
+        for(int j = 0; j < sdivPerDiv; ++j) {
+            if (parts[i][sdivNum+j].pitch == pitch) {
+                onPitch[i] = 1;
+            }
+        }
+    }
+    int ret = 0;
+    for (int i = 0; i < nparts; ++i) {
+        ret += onPitch[i];
+    }
+    return ret;
 }
 
