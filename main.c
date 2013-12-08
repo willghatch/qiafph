@@ -41,7 +41,7 @@ void chordInfoCp(ChordInfo* src, ChordInfo* dst) {
 }
 
 void printHelp(int exitStatus) {
-    fprintf(stderr, "Four Part Harmony Generator\n");
+    fprintf(stderr, "qiafph -- qiafph is a four part harmonizer\n");
     fprintf(stderr, "Written by William Hatch for CS 5600 at USU\n");
     fprintf(stderr, "Generates four part harmony.  Configured at the moment in source\n");
     fprintf(stderr, "in rulescores.h and globalvars.h\n");

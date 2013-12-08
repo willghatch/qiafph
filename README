@@ -1,6 +1,22 @@
-This will be a four part harmony music generating program for my Intelligent Systems (CS 5600) class.
 
-It should be fun.  I haven't even decided 100% what language I'll write it in yet.
+qiafph -- Qiafph Is A Four Part Harmonizer
 
-But I know what version control system I'll use!
+Written by William Hatch
+for CS 5600 at USU
+
+Qoafph is written in C and can be built by running "make".
+It only depends on standard C libraries for building.
+
+Qiafph is mostly configured in source.  Edit rulescores.h to change rule weights.
+Qiafph outputs Midge format files.  These can be converted to MIDI using Midge.
+Find Midge at http://www.undef.org.uk/code/midge/.  It's a perl script, so you'll need perl to run it.
+
+Alternatively it can output MuseData output, but that section is currently commented out.
+I switched to Midge because MuseData gave weird results sometimes.
+
+MIDI files can be played with many players, eg. Timidity, and imported into Musescore for viewing the sheet music.
+
+Qiafph options can be viewed by running 'quiafph --help'
+
+Also included is midig.sh, a convenient wrapper script that uses qiafph and midge to generate .mg, .mid, and a .a analysis file (it's just text)
 

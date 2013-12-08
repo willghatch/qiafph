@@ -19,14 +19,14 @@ else
     analysisStr=""
 fi
 
-if type mgen 1>/dev/null 2>&1 
+if type qiafph 1>/dev/null 2>&1 
 then
-    cmd="mgen"
-elif type ./mgen 1>/dev/null 2>&1 
+    cmd="qiafph"
+elif type ./qiafph 1>/dev/null 2>&1 
 then
-    cmd="./mgen"
+    cmd="./qiafph"
 else
-    echo >&2 "mgen command required and not found in path or current directory.  Aborting."
+    echo >&2 "qiafph command required and not found in path or current directory.  Aborting."
     exit 1
 fi
 
