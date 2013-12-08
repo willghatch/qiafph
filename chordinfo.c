@@ -3,6 +3,7 @@
 #include "chordinfo.h"
 #include "globalvars.h"
 #include "notes.h"
+#include "rulescores.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -102,7 +103,11 @@ void getChordInfo_most(int* sdivPitches, int npitches, ChordInfo* singleChord) {
         }
         if (score > bestFitScore) {
             bestFitRoot = note;
-            bestFitScore = score;
+            if (!RS_USE_VII_BUG) {
+                // This if statement is here because I had a bug where this didn't happen
+                // but I actually kinda liked the output with the bug there.
+                bestFitScore = score;
+            }
             memcpy(intervals, temp_intervals, 12*sizeof(int));
         }
     } // Now we have the best fit root of all.

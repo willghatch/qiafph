@@ -11,6 +11,7 @@
 #include "chordinfo.h"
 #include "mutations.h"
 #include "score.h"
+#include "rulescores.h"
 
 
 
@@ -225,6 +226,10 @@ int main(int argc, char** argv) {
     int numAccepted = 0;
     int numRejected = 0;
 
+    if (RS_JUST_RANDOM) {
+        // If Just random is set, skip all of this simulated annealing crap.
+        numPasses = 0;
+    }
     for(int i = 0; i < numPasses; ++i) {
         acceptedChangeP = 0;
         mutatePiece(trialParts);

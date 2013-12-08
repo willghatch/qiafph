@@ -76,5 +76,13 @@
 
 
 
+//// Style switch
+#define RS_USE_VII_BUG 0
+#define RS_JUST_RANDOM 0
+
+
+
+
+
 #endif //RULESCORES_H
 
