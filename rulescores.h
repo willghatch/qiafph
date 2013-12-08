@@ -25,6 +25,9 @@
 #define R_DOUBLE_FIFTH 0
 #define R_DOUBLE_LEADING_TONE -100
 
+#define R_PARALLEL_FIFTH -80
+#define R_PARALLEL_OCTAVE -50
+
 // This one is a joke
 #define R_ONLY_USE_I_IV_V 200
 

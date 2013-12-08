@@ -307,6 +307,26 @@ int r_octave_distance_not_bass(Note** parts) {
     return score;
 }
 
+int r_parallel_parts(Note** parts) {
+    int score = 0;
+    for (int partA = 0; partA < nparts-1; ++partA) {
+        for (int partB = partA+1; partB < nparts; ++partB) {
+            for (int sdiv = 0; sdiv < totalSubdivisions-1; ++sdiv) {
+                int pa1 = parts[partA][sdiv].pitch;
+                int pa2 = parts[partA][sdiv+1].pitch;
+                int pb1 = parts[partB][sdiv].pitch;
+                int pb2 = parts[partB][sdiv+1].pitch;
+                if (pb1-pa1 == pb2-pb2) {
+                    int diff = abs(pb1-pa1) %12;
+                    if (diff == I_P5) {score += R_PARALLEL_FIFTH;}
+                    if (diff == I_UN) {score += R_PARALLEL_OCTAVE;}
+                }
+            }
+        }
+    }
+    return score;
+}
+
 
 
 
