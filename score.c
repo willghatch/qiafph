@@ -422,6 +422,7 @@ int scorePiece(Note** parts, ChordInfo* chords, int** partsIntervals) {
     score += r_no_non_chord_tones(chords, key);
     score += r_only_use_I_IV_V(chords, key);
     score += r_tritone_leap(parts, key);
+    score += r_parallel_parts(parts);
     return score;
 }
 
