@@ -9,18 +9,18 @@
 
 ////  Chord Rules
 #define R_NO_CHORD_ON_BEAT -100
-#define R_NON_CHORD_SDIV -10
-#define R_CHORD_IN_NORMAL_KEY_CHORDS 100
+#define R_NON_CHORD_SDIV -60
+#define R_CHORD_IN_NORMAL_KEY_CHORDS 200
 #define R_FULL_CHORD 200
-#define R_NO_NON_CHORD_TONES 100
+#define R_NO_NON_CHORD_TONES 200
 
 #define R_START_CHORD__I 300
 #define R_START_CHORD__V 250
 
-#define R_END_CADENCE__AUTHENTIC 400
-#define R_END_CADENCE__PLAGAL 350 
+#define R_END_CADENCE__AUTHENTIC 500
+#define R_END_CADENCE__PLAGAL 450 
 
-#define R_DOUBLE_ROOT 40
+#define R_DOUBLE_ROOT 100
 #define R_DOUBLE_THIRD -20
 #define R_DOUBLE_FIFTH 0
 #define R_DOUBLE_LEADING_TONE -100
@@ -29,7 +29,7 @@
 #define R_PARALLEL_OCTAVE -50
 
 // This one is a joke
-#define R_ONLY_USE_I_IV_V 200
+#define R_ONLY_USE_I_IV_V 0
 
 
 // Chord progressions
@@ -68,7 +68,7 @@
 
 
 ////  Melody Rules
-#define R_STEPWISE_IN_KEY 60
+#define R_STEPWISE_IN_KEY 100
 #define R_LEADING_TONE_NOT_TO_TONIC -100
 #define R_NOTE_NOT_IN_KEY -100
 #define R_TRITONE_LEAP -200
